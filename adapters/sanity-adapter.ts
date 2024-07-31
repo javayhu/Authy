@@ -1,14 +1,15 @@
 import type { SanityClient } from '@sanity/client';
 import { uuid } from '@sanity/uuid';
 
-
 import type {
   Adapter,
   AdapterSession,
   AdapterUser,
-} from "@auth/core/adapters"
+} from "@auth/core/adapters";
 import { User, UserRole } from "@/models/typings";
 
+// https://authjs.dev/reference/core/adapters
+// https://authjs.dev/guides/creating-a-database-adapter
 export function SanityAdapter(
   sanityClient: SanityClient,
   options = {
@@ -22,10 +23,9 @@ export function SanityAdapter(
 ): Adapter{
 
   return {
+    // https://authjs.dev/guides/creating-a-database-adapter#methods-and-models
     async createUser(user) {
-
       try {
-        
         const existingUser_qry = `*[_type == "user" && email == "${user.email}"][0]`;
         const existingUser = await sanityClient.fetch(existingUser_qry);
 
@@ -58,18 +58,6 @@ export function SanityAdapter(
         const user = await sanityClient.fetch(user_qry);
 
         return user;
-      } catch (error) {
-        throw new Error('Couldnt get the user');
-      }
-    },
-
-    async getUserByEmail(email) {
-      try {
-        const user_qry =  `*[_type == "user" && email== "${email}"][0]`;
-        const user = await sanityClient.fetch(user_qry);
-
-        return user;
-
       } catch (error) {
         throw new Error('Couldnt get the user');
       }
@@ -125,7 +113,7 @@ export function SanityAdapter(
       try {
         return await sanityClient.delete(userId);
       } catch (error: any) {
-        throw new Error('Could not delete user', error)
+        throw new Error('Could not delete user', error);
       }
     },
 
@@ -197,6 +185,7 @@ export function SanityAdapter(
       }
     },
 
+    // https://authjs.dev/guides/creating-a-database-adapter#database-session-management
     async createSession(session) {
       try {
         await sanityClient.create({
@@ -261,6 +250,19 @@ export function SanityAdapter(
 
       } catch (error) {
         throw new Error('Operation Failed');
+      }
+    },
+
+    // https://authjs.dev/guides/creating-a-database-adapter#verification-tokens
+    async getUserByEmail(email) {
+      try {
+        const user_qry =  `*[_type == "user" && email== "${email}"][0]`;
+        const user = await sanityClient.fetch(user_qry);
+
+        return user;
+
+      } catch (error) {
+        throw new Error('Couldnt get the user');
       }
     },
     async createVerificationToken({ identifier, expires, token }) {

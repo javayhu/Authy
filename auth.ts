@@ -20,6 +20,7 @@ export const {
   //unstable update in Beta version
   unstable_update
 } = NextAuth({
+  debug: process.env.NODE_ENV === "development",
   pages: {
     signIn: "/auth/login",
     error: "/auth/error"
@@ -82,7 +83,7 @@ export const {
 
       return true
     },
-    //@ts-ignore
+    // @ts-ignore
     async session({ session, token }){
 
       if(token.sub && session.user) {
