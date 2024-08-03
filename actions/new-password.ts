@@ -9,7 +9,7 @@ import { getUserByEmail } from "@/data/user";
 import sanityClient from "@/lib/sanityClient";
 
 export const newPassword = async (
-  values: z.infer<typeof NewPasswordSchema> ,
+  values: z.infer<typeof NewPasswordSchema>,
   token?: string | null,
 ) => {
 

@@ -13,17 +13,17 @@ import { sendVerificationEmail } from "@/lib/mail";
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
     const validatedFields = RegisterSchema.safeParse(values);
 
-    if(!validatedFields.success) {
-        return {error: "Invalid Fields!"};
+    if (!validatedFields.success) {
+        return { error: "Invalid Fields!" };
     }
 
-    const {email, password, name} = validatedFields.data;
+    const { email, password, name } = validatedFields.data;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const existingUser = await getUserByEmail(email);
 
-    if(existingUser) {
-        return {error: "Email already being used"}
+    if (existingUser) {
+        return { error: "Email already being used" };
     }
 
     await sanityClient.create({
@@ -44,5 +44,5 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     )
 
 
-    return {success: "Confirmation email sent"};
+    return { success: "Confirmation email sent" };
 }

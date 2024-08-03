@@ -17,13 +17,13 @@ export const settings = async (
   const user = await currentUser();
 
   if (!user) {
-    return { error: "Unauthorized" }
+    return { error: "Unauthorized" };
   }
 
   const dbUser = await getUserById(user.id!);
 
   if (!dbUser) {
-    return { error: "Unauthorized" }
+    return { error: "Unauthorized" };
   }
 
   if (user.isOAuth) {
@@ -37,7 +37,7 @@ export const settings = async (
     const existingUser = await getUserByEmail(values.email);
 
     if (existingUser && existingUser.id !== user.id) {
-      return { error: "Email already in use!" }
+      return { error: "Email already in use!" };
     }
 
     const verificationToken = await generateVerificationToken(
@@ -83,5 +83,5 @@ export const settings = async (
     }
   });
 
-  return { success: "Settings Updated!" }
+  return { success: "Settings Updated!" };
 }

@@ -1,9 +1,4 @@
-# Advanced Authentication Workflow | Authy: Next.js 14, NextAuthV5, SanityCMS Custom Adapter, Typescript
-![COVER](https://github.com/KennedyNvsf/Authy/assets/45067556/0429299c-c8e9-4d67-966b-2ad4902e165e)
-
-
-This is a repository for Authy: Next.js 14, NextAuthV5, SanityCMS Custom Adapter, Typescript
-
+# NextDir
 
 Key Features:
 - 🔐 Next-auth v5 (Auth.js)
@@ -45,7 +40,6 @@ npm i
 
 
 ```js
-
 NEXT_PUBLIC_APP_URL=
 
 NEXT_PUBLIC_SANITY_PROJECT_ID=
@@ -61,7 +55,6 @@ GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
 RESEND_API_KEY=
-
 ```
 
 ### Running app
