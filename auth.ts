@@ -1,13 +1,13 @@
-import NextAuth from "next-auth"
-import GitHub from "next-auth/providers/github"
+import NextAuth from "next-auth";
+import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
-import { SanityAdapter } from "./adapters/sanity-adapter"
-import sanityClient from "./lib/sanityClient"
-import Credentials from "next-auth/providers/credentials"
-import { LoginSchema } from "./form-schemas"
+import { SanityAdapter } from "./adapters/sanity-adapter";
+import sanityClient from "./lib/sanityClient";
+import Credentials from "next-auth/providers/credentials";
+import { LoginSchema } from "./form-schemas";
 import bcrypt from "bcryptjs";
 
-import { getUserById } from "./data/user"
+import { getUserById } from "./data/user";
 import { getTwoFactorConfirmationByUserId } from "./data/two-factor-confirmation";
 import { getAccountByUserId } from "./data/account";
 
