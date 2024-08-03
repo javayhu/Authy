@@ -8,7 +8,6 @@ import { LoginSchema } from "./form-schemas";
 import bcrypt from "bcryptjs";
 
 import { getUserById } from "./data/user";
-import { getTwoFactorConfirmationByUserId } from "./data/two-factor-confirmation";
 import { getAccountByUserId } from "./data/account";
 
 
@@ -20,7 +19,7 @@ export const {
   //unstable update in Beta version
   unstable_update
 } = NextAuth({
-  debug: process.env.NODE_ENV === "development",
+  // debug: process.env.NODE_ENV === "development",
   pages: {
     signIn: "/auth/login",
     error: "/auth/error"
@@ -51,7 +50,6 @@ export const {
         }
 
         const passwordsMatch = await bcrypt.compare(credentials?.password as string, user.password);
-
         if (passwordsMatch) {
           return {
             id: user._id,
@@ -77,16 +75,6 @@ export const {
       // prevent signIn without email verification
       if (!existingUser?.emailVerified) return false;
 
-      // 2FA CHECK
-      if (existingUser.isTwoFactorEnabled) {
-        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(existingUser._id);
-
-        if (!twoFactorConfirmation) return false;
-
-        // Delete 2FA for next signin
-        await sanityClient.delete(twoFactorConfirmation._id);
-      }
-
       return true;
     },
     // @ts-ignore
@@ -98,10 +86,6 @@ export const {
       // TODO: fix type or // @ts-ignore 
       if (token.role && session.user) {
         session.user.role = token.role;
-      }
-
-      if (session.user) {
-        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
       }
 
       if (session.user) {
@@ -126,7 +110,6 @@ export const {
       token.name = existingUser.name;
       token.email = existingUser.email;
       token.role = existingUser.role;
-      token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
       return token;
     },

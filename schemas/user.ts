@@ -47,18 +47,6 @@ const user = {
       title: 'Accounts',
       type: 'reference',
       to: [{ type: 'account' }],
-    }),
-    defineField({
-      name: 'isTwoFactorEnabled',
-      title: 'Is Two Factor Enabled',
-      type: 'boolean',
-      initialValue: false,
-    }),
-    defineField({
-      name: 'twoFactorConfirmation',
-      title: 'Two Factor Confirmation',
-      type: 'reference',
-      to: [{ type: 'twoFactorConfirmation' }],
     })
   ],
   preview: {

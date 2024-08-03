@@ -23,6 +23,7 @@ export default function Home() {
           The Next Auth V5 & Sanity CMS Experience
         </p>
         <div>
+          {/* modal or redirect */}
           <LoginButton  mode="modal" asChild>
             <Button variant="secondary" size="lg">
               Sign in

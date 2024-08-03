@@ -33,17 +33,3 @@ export const sendVerificationEmail = async (
     html: `<p>Click <a href="${confirmLink}">here</a> to confirm email.</p>`
   });
 };
-
-export const sendTwoFactorTokenEmail = async (
-  email: string,
-  token: string
-) => {
-  
-  // TODO: set from email in env
-  await resend.emails.send({
-    from: "support@haitang.app",
-    to: email,
-    subject: "2FA Code",
-    html: `<p>Your 2FA code: ${token}</p>`
-  });
-};
