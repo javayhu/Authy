@@ -1,5 +1,5 @@
 import { defineField } from 'sanity';
-import {TokenIcon} from '@sanity/icons'
+import { TokenIcon } from '@sanity/icons';
 
 const twoFactorConfirmation = {
   name: 'twoFactorConfirmation',
@@ -16,8 +16,8 @@ const twoFactorConfirmation = {
       name: 'user',
       title: 'User',
       type: 'reference',
-      to: [{type: 'user'}],
-  }),
+      to: [{ type: 'user' }],
+    }),
   ],
 };
 

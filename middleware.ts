@@ -6,6 +6,8 @@ import {
   publicRoutes
 } from "@/routes";
 
+
+// TODO: fix type here or // @ts-ignore
 export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
@@ -19,13 +21,13 @@ export default auth((req) => {
   }
 
   if (isAuthRoute) {
-    if(isLoggedIn) {
+    if (isLoggedIn) {
       return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl))
     }
     return null;
   }
 
-  if(!isLoggedIn && !isPublicRoute) {
+  if (!isLoggedIn && !isPublicRoute) {
     return Response.redirect(new URL("/auth/login", nextUrl))
   }
 
@@ -35,5 +37,9 @@ export default auth((req) => {
 
 // Optionally, don't invoke Middleware on some paths
 export const config = {
-    matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+  matcher: [
+    '/((?!.+\\.[\\w]+$|_next).*)',
+    '/',
+    '/(api|trpc)(.*)'
+  ],
 }

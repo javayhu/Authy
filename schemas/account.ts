@@ -1,5 +1,5 @@
 import { defineField } from 'sanity';
-import {DocumentTextIcon} from '@sanity/icons'
+import { DocumentTextIcon } from '@sanity/icons';
 
 const account = {
   name: 'account',
@@ -12,7 +12,7 @@ const account = {
       title: 'User Id',
       type: 'string',
       validation: Rule => Rule.required(),
-  }),
+    }),
     defineField({
       name: 'type',
       title: 'Account Type',
@@ -40,7 +40,7 @@ const account = {
       name: 'accessToken',
       title: 'Access Token',
       type: 'string',
-  }),
+    }),
     defineField({
       name: 'expiresAt',
       title: 'Expires At',
@@ -70,7 +70,7 @@ const account = {
       name: 'user',
       title: 'User',
       type: 'reference',
-      to: [{type: 'user'}],
+      to: [{ type: 'user' }],
     }),
   ],
   preview: {

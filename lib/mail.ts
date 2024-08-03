@@ -10,6 +10,7 @@ export const sendPasswordResetEmail = async (
 ) => {
   const resetLink = `${domain}/auth/new-password?token=${token}`
 
+  // TODO: set from email in env
   await resend.emails.send({
     from: "support@haitang.app",
     to: email,
@@ -24,6 +25,7 @@ export const sendVerificationEmail = async (
 ) => {
   const confirmLink = `${domain}/auth/new-verification?token=${token}`;
 
+  // TODO: set from email in env
   await resend.emails.send({
     from: "support@haitang.app",
     to: email,
@@ -36,6 +38,8 @@ export const sendTwoFactorTokenEmail = async (
   email: string,
   token: string
 ) => {
+  
+  // TODO: set from email in env
   await resend.emails.send({
     from: "support@haitang.app",
     to: email,

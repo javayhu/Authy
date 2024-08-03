@@ -22,11 +22,10 @@ export const signUp = async (payload: SignUpPayload): Promise<User> => {
       ?.includes('application/json');
 
     const data = isJson ? await res.json() : await res.text();
-
+    
     throw new Error(data);
   }
 
   const user = await res.json();
-
   return user;
 };

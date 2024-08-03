@@ -7,15 +7,13 @@ import { uuid } from '@sanity/uuid';
 import crypto from "crypto";
 
 export const generateVerificationToken = async (email: string) => {
-    
     const token = `token.${uuid()}`;
 
     //expires in 1hour
-    const expires = new Date(new Date().getTime() + 3600 * 1000).toISOString(); 
+    const expires = new Date(new Date().getTime() + 3600 * 1000).toISOString();
 
     const existingToken = await getVerificationTokenByEmail(email);
-
-    if(existingToken) {
+    if (existingToken) {
         await sanityClient.delete(existingToken._id);
     }
 
@@ -30,15 +28,13 @@ export const generateVerificationToken = async (email: string) => {
 }
 
 export const generatePasswordResetToken = async (email: string) => {
-
     const token = `token.${uuid()}`;
 
     //expires in 1hour
-    const expires = new Date(new Date().getTime() + 3600 * 1000).toISOString(); 
+    const expires = new Date(new Date().getTime() + 3600 * 1000).toISOString();
 
     const existingToken = await getPasswordResetTokenByEmail(email);
-
-    if(existingToken) {
+    if (existingToken) {
         await sanityClient.delete(existingToken._id);
     }
 
@@ -53,15 +49,13 @@ export const generatePasswordResetToken = async (email: string) => {
 }
 
 export const generateTwoFactorToken = async (email: string) => {
-
     const token = crypto.randomInt(100_000, 1_000_000).toString();
 
     //expires in 5 minutes
     const expires = new Date(new Date().getTime() + 5 * 60 * 1000).toISOString();
 
     const existingToken = await getTwoFactorTokenByEmail(email);
-
-    if(existingToken) {
+    if (existingToken) {
         await sanityClient.delete(existingToken._id);
     }
 

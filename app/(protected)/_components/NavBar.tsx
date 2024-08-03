@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { UserButton } from "@/components/auth/user-button";
 
 export const NavBar = () => {
-    
   const pathname = usePathname();
 
   return (

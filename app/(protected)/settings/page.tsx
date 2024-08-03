@@ -74,7 +74,7 @@ const SettingsPage = () => {
     });
   }
 
-  return ( 
+  return (
     <Card className="w-[600px]">
       <CardHeader>
         <p className="text-2xl font-semibold text-center">
@@ -83,8 +83,8 @@ const SettingsPage = () => {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form 
-            className="space-y-6" 
+          <form
+            className="space-y-6"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <div className="space-y-4">
@@ -228,7 +228,7 @@ const SettingsPage = () => {
         </Form>
       </CardContent>
     </Card>
-   );
+  );
 }
- 
+
 export default SettingsPage;

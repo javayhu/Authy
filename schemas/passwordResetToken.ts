@@ -1,5 +1,5 @@
 import { defineField } from 'sanity';
-import {TokenIcon} from '@sanity/icons'
+import { TokenIcon } from '@sanity/icons';
 
 const passwordResetToken = {
   name: 'passwordResetToken',
@@ -13,10 +13,10 @@ const passwordResetToken = {
       type: 'string',
     }),
     defineField({
-        name: 'token',
-        title: 'Token',
-        type: 'string',
-        validation: Rule => Rule.required(),
+      name: 'token',
+      title: 'Token',
+      type: 'string',
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'expires',

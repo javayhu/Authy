@@ -1,5 +1,5 @@
 import { defineField } from 'sanity';
-import {DatabaseIcon} from '@sanity/icons'
+import { DatabaseIcon } from '@sanity/icons';
 
 const session = {
   name: 'session',
@@ -14,10 +14,10 @@ const session = {
       validation: Rule => Rule.required(),
     }),
     defineField({
-        name: 'userId',
-        title: 'User Id',
-        type: 'string',
-        validation: Rule => Rule.required(),
+      name: 'userId',
+      title: 'User Id',
+      type: 'string',
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'expires',
@@ -26,10 +26,10 @@ const session = {
       validation: Rule => Rule.required(),
     }),
     defineField({
-        name: 'user',
+      name: 'user',
       title: 'User',
       type: 'reference',
-      to: [{type: 'user'}],
+      to: [{ type: 'user' }],
     }),
   ],
   preview: {

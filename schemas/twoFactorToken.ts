@@ -1,5 +1,5 @@
 import { defineField } from 'sanity';
-import {TokenIcon} from '@sanity/icons'
+import { TokenIcon } from '@sanity/icons';
 
 const twoFactorToken = {
   name: 'twoFactorToken',

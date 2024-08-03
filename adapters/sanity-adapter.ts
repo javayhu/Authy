@@ -20,7 +20,7 @@ export function SanityAdapter(
       session: 'session'
     }
   }
-): Adapter{
+): Adapter {
 
   return {
     // https://authjs.dev/guides/creating-a-database-adapter#methods-and-models
@@ -29,7 +29,7 @@ export function SanityAdapter(
         const existingUser_qry = `*[_type == "user" && email == "${user.email}"][0]`;
         const existingUser = await sanityClient.fetch(existingUser_qry);
 
-        if(existingUser) return existingUser;
+        if (existingUser) return existingUser;
 
         const createdUser = await sanityClient.create({
           _type: options.schemas.user,
@@ -42,36 +42,34 @@ export function SanityAdapter(
           emailVerified: user.emailVerified
         });
 
-
         return {
           id: createdUser._id,
           ...createdUser
         };
       } catch (error) {
-        throw new Error('Failed to Create user')
+        throw new Error('createUser, Failed to Create user');
       }
     },
 
     async getUser(id) {
       try {
-        const user_qry =  `*[_type == "user" && _id== "${id}"][0]`;
+        const user_qry = `*[_type == "user" && _id== "${id}"][0]`;
         const user = await sanityClient.fetch(user_qry);
 
         return user;
       } catch (error) {
-        throw new Error('Couldnt get the user');
+        throw new Error('getUser, Couldnt get the user');
       }
     },
 
     async getUserByAccount({ providerAccountId, provider }) {
-
       try {
-        const account_qry =  `*[_type == "account" && provider == "${provider}" && providerAccountId == "${providerAccountId}"][0]`;
+        const account_qry = `*[_type == "account" && provider == "${provider}" && providerAccountId == "${providerAccountId}"][0]`;
         const account = await sanityClient.fetch(account_qry);
 
         if (!account) return;
 
-        const user_qry =  `*[_type == "user" && _id== "${account.userId}"][0]`;
+        const user_qry = `*[_type == "user" && _id== "${account.userId}"][0]`;
         const user = await sanityClient.fetch(user_qry);
 
         return {
@@ -81,7 +79,7 @@ export function SanityAdapter(
         };
 
       } catch (error) {
-        throw new Error('Couldnt get the user');
+        throw new Error('getUserByAccount, Couldnt get the user');
       }
     },
 
@@ -90,22 +88,20 @@ export function SanityAdapter(
         const existingUser_qry = `*[_type == "user" && _id == "${updatedUser?.id}"][0]`;
         const existingUser = await sanityClient.fetch(existingUser_qry);
 
-        if(!existingUser) {
+        if (!existingUser) {
           throw new Error(`Could not update user: ${updatedUser.id}; unable to find user`)
         }
 
         const patchedUser = await sanityClient.patch(existingUser._id)
-        .set({
-          emailVerified: updatedUser.emailVerified === null ? undefined : updatedUser.emailVerified,
-          ...existingUser
-        })
-        .commit();
+          .set({
+            emailVerified: updatedUser.emailVerified === null ? undefined : updatedUser.emailVerified,
+            ...existingUser
+          })
+          .commit();
 
-
-        return patchedUser as any
-
+        return patchedUser as any;
       } catch (error) {
-        throw new Error('Couldnt update the user');
+        throw new Error('updateUser, Couldnt update the user');
       }
     },
 
@@ -113,15 +109,14 @@ export function SanityAdapter(
       try {
         return await sanityClient.delete(userId);
       } catch (error: any) {
-        throw new Error('Could not delete user', error);
+        throw new Error('deleteUser, Could not delete user', error);
       }
     },
 
     async linkAccount(account) {
       try {
-
         const createdAccount = await sanityClient.create({
-          _type: options.schemas.account, 
+          _type: options.schemas.account,
           userId: account.userId,
           type: account.type,
           provider: account.provider,
@@ -150,25 +145,24 @@ export function SanityAdapter(
             _ref: createdAccount._id
           }
         })
-    
-        return account;
 
+        return account;
       } catch (error) {
-        throw new Error('Error linking account')
+        throw new Error('linkAccount, Error linking account');
       }
     },
 
     async unlinkAccount({ providerAccountId, provider }) {
       try {
-        const account_qry =  `*[_type == "account" && provider == "${provider}" && providerAccountId == "${providerAccountId}"][0]`;
+        const account_qry = `*[_type == "account" && provider == "${provider}" && providerAccountId == "${providerAccountId}"][0]`;
         const account = await sanityClient.fetch(account_qry);
 
         if (!account) return;
 
-        const accountUser  = await sanityClient.getDocument<User>(account.userId);
+        const accountUser = await sanityClient.getDocument<User>(account.userId);
 
         // Filter out the user account to be deleted
-        const updatedUserAccounts= (accountUser?.accounts || []).filter(
+        const updatedUserAccounts = (accountUser?.accounts || []).filter(
           ac => ac._ref !== account._id
         );
 
@@ -179,9 +173,8 @@ export function SanityAdapter(
         });
 
         await sanityClient.delete(account._id);
-
       } catch (error) {
-        throw new Error('Could not Unlink account');
+        throw new Error('unlinkAccount, Could not Unlink account');
       }
     },
 
@@ -189,43 +182,42 @@ export function SanityAdapter(
     async createSession(session) {
       try {
         await sanityClient.create({
-          _type: 'session', 
+          _type: 'session',
           user: {
             _type: 'reference',
             _ref: session.userId
           },
           ...session
         })
-    
-        return session;
 
+        return session;
       } catch (error) {
-        throw new Error('Error Creating Session')
+        throw new Error('createSession, Error Creating Session');
       }
     },
+
     async getSessionAndUser(sessionToken: string): Promise<{ session: AdapterSession; user: AdapterUser; } | null> {
       try {
-        const session_qry =  `*[_type == "session" && sessionToken == "${sessionToken}"][0]`;
+        const session_qry = `*[_type == "session" && sessionToken == "${sessionToken}"][0]`;
         const session = await sanityClient.fetch(session_qry);
 
         if (!session) return null;
 
-        const user_qry =  `*[_type == "user" && _id== "${session.userId}"][0]`;
+        const user_qry = `*[_type == "user" && _id== "${session.userId}"][0]`;
         const user = await sanityClient.fetch(user_qry);
 
-        return { 
-          session: session, 
+        return {
+          session: session,
           user: user,
-  
         };
-
       } catch (error) {
-        throw new Error('Operation Failed');
+        throw new Error('getSessionAndUser, Operation Failed');
       }
-   },
+    },
+
     async updateSession({ sessionToken }) {
       try {
-        const session_qry =  `*[_type == "session" && sessionToken == "${sessionToken}"][0]`;
+        const session_qry = `*[_type == "session" && sessionToken == "${sessionToken}"][0]`;
         const session = await sanityClient.fetch(session_qry);
 
         if (!session) return null;
@@ -233,60 +225,67 @@ export function SanityAdapter(
         await sanityClient.patch(session._id).set({
           ...session
         }).commit();
-
       } catch (error) {
-        throw new Error('Operation Failed');
+        throw new Error('updateSession, Operation Failed');
       }
     },
-    async deleteSession(sessionToken) {
 
+    async deleteSession(sessionToken) {
       try {
-        const session_qry =  `*[_type == "session" && sessionToken == "${sessionToken}"][0]`;
+        const session_qry = `*[_type == "session" && sessionToken == "${sessionToken}"][0]`;
         const session = await sanityClient.fetch(session_qry);
 
         if (!session) return null;
 
         await sanityClient.delete(session._id);
-
       } catch (error) {
-        throw new Error('Operation Failed');
+        throw new Error('deleteSession, Operation Failed');
       }
     },
 
     // https://authjs.dev/guides/creating-a-database-adapter#verification-tokens
     async getUserByEmail(email) {
       try {
-        const user_qry =  `*[_type == "user" && email== "${email}"][0]`;
+        const user_qry = `*[_type == "user" && email== "${email}"][0]`;
         const user = await sanityClient.fetch(user_qry);
 
         return user;
-
       } catch (error) {
-        throw new Error('Couldnt get the user');
+        throw new Error('getUserByEmail, Couldnt get the user');
       }
     },
+
     async createVerificationToken({ identifier, expires, token }) {
-      const verificationToken = await sanityClient.create({
-        _type: options.schemas.verificationToken,
-        identifier,
-        token,
-        expires
-      });
+      try {
+        const verificationToken = await sanityClient.create({
+          _type: options.schemas.verificationToken,
+          identifier,
+          token,
+          expires
+        });
 
-      return verificationToken;
+        return verificationToken;
+      } catch (error) {
+        throw new Error('createVerificationToken, Couldnt create verification token');
+      }
     },
+
     async useVerificationToken({ identifier, token }) {
-      const verToken_qry =  `*[_type == "verificationToken" && identifier == "${identifier}" && token == "${token}"][0]`;
-      const verToken = await sanityClient.fetch(verToken_qry);
+      try {
+        const verToken_qry = `*[_type == "verificationToken" && identifier == "${identifier}" && token == "${token}"][0]`;
+        const verToken = await sanityClient.fetch(verToken_qry);
 
-      if (!verToken) return null;
+        if (!verToken) return null;
 
-      await sanityClient.delete(verToken._id);
+        await sanityClient.delete(verToken._id);
 
-      return {
-        id: verToken._id,
-        ...verToken
-      };
+        return {
+          id: verToken._id,
+          ...verToken
+        };
+      } catch (error) {
+        throw new Error('useVerificationToken, Couldnt delete verification token');
+      }
     },
   }
 }

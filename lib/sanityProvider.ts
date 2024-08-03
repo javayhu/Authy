@@ -1,5 +1,3 @@
-// sanityProvider.js
-
 import type { CredentialsConfig } from 'next-auth/providers';
 import Credentials from 'next-auth/providers/credentials';
 import type { SanityClient } from '@sanity/client';
@@ -24,107 +22,100 @@ import { LoginSchema } from '@/form-schemas';
 
 
 export const signUpHandler = (
-    sanityClient: SanityClient, userSchema: string = 'user'
-) =>
-  async (req: any, res: any) => {
+  sanityClient: SanityClient,
+  userSchema: string = 'user'
+) => async (req: any, res: any) => {
+  const isEdge = req instanceof Request;
 
-    const isEdge = req instanceof Request;
+  const body = isEdge ? await req.json() : req.body;
 
-    const body = isEdge ? await req.json() : req.body;
+  const { email, password, name, image, ...userData } = body;
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-    const { email, password, name, image, ...userData } = body;
-    const hashedPassword = await bcrypt.hash(password, 10);
+  const user_qry = `*[_type == "user" && email == "${email}"][0]`;
+  const user = await sanityClient.fetch(user_qry);
 
-
-    const user_qry =  `*[_type == "user" && email== "${email}"][0]`;
-    const user = await sanityClient.fetch(user_qry);
-
-    //handle if user exists
-    if (user) {
-
-      const response = { error: 'User already exist' };
-
-      if (isEdge) {
-        return new Response(JSON.stringify(response), {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          status: 400
-        });
-      }
-
-      res.json(response);
-      return;
-    }
-
-    const newUser = await sanityClient.create({
-      _id: `user.${uuid()}`,
-      _type: userSchema,
-      email,
-      password: hashedPassword,
-      name,
-      image,
-      ...userData
-    });
+  // handle if user exists
+  if (user) {
+    const response = { error: 'User already exist' };
 
     if (isEdge) {
-      return new Response(JSON.stringify(newUser), {
+      return new Response(JSON.stringify(response), {
         headers: {
           'Content-Type': 'application/json'
         },
-        status: 200
+        status: 400
       });
     }
 
-    res.json({
-      id: newUser._id,
-      ...newUser
-    });
-  };
+    res.json(response);
+    return;
+  }
 
+  const newUser = await sanityClient.create({
+    _id: `user.${uuid()}`,
+    _type: userSchema,
+    email,
+    password: hashedPassword,
+    name,
+    image,
+    ...userData
+  });
 
-
-
-export const SanityCredentials = (
-    sanityClient: SanityClient
-): CredentialsConfig =>
-
-    Credentials({
-      name: 'Credentials',
-      id: 'sanity-login',
-      type: 'credentials',
-      credentials: {
-        email: {
-          label: 'Email',
-          type: 'text'
-        },
-        password: {
-          label: 'Password',
-          type: 'password'
-        }
+  if (isEdge) {
+    return new Response(JSON.stringify(newUser), {
+      headers: {
+        'Content-Type': 'application/json'
       },
-
-      async authorize(credentials) {
-
-        //if not using zod resolvers validated fields arent necessary
-        const validatedFields = LoginSchema.safeParse(credentials);
-        if(!validatedFields.success) return null;
-
-        const user_qry =  `*[_type == "user" && email== "${credentials?.email}"][0]`;
-        const user = await sanityClient.fetch(user_qry);
-
-        if (!user || !user.password) return null;
-
-        const passwordsMatch = await bcrypt.compare(credentials?.password as string, user.password);
-  
-        if (passwordsMatch) {
-          return {
-            id: user._id,
-            ...user
-          };
-        } 
-        
-        return null;
-  
-      }
+      status: 200
     });
+  }
+
+  res.json({
+    id: newUser._id,
+    ...newUser
+  });
+};
+
+// TODO: not used for now
+export const SanityCredentials = (
+  sanityClient: SanityClient
+): CredentialsConfig => Credentials({
+  name: 'Credentials',
+  id: 'sanity-login',
+  type: 'credentials',
+  credentials: {
+    email: {
+      label: 'Email',
+      type: 'text'
+    },
+    password: {
+      label: 'Password',
+      type: 'password'
+    }
+  },
+
+  async authorize(credentials) {
+    // if not using zod resolvers validated fields arent necessary
+    const validatedFields = LoginSchema.safeParse(credentials);
+    if (!validatedFields.success) return null;
+
+    const user_qry = `*[_type == "user" && email== "${credentials?.email}"][0]`;
+    const user = await sanityClient.fetch(user_qry);
+
+    if (!user || !user.password) {
+      console.error('authorize error: user not found or password invalid');
+      return null;
+    }
+
+    const passwordsMatch = await bcrypt.compare(credentials?.password as string, user.password);
+    if (passwordsMatch) {
+      return {
+        id: user._id,
+        ...user
+      };
+    }
+
+    return null;
+  }
+});
